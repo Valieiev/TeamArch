@@ -1,0 +1,69 @@
+﻿@page "/registration"
+@using Web.Client.Services
+@using Web.Shared
+@layout EmptyLayout
+
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+<h1>Register</h1>
+
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="@RegisterModel" OnValidSubmit="@HandleRegistration">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <InputText Id="email" Class="form-control" @bind-Value="@RegisterModel.Email" />
+                <ValidationMessage For="@(() => RegisterModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText type="password" id="password" Class="form-control" @bind-Value="@RegisterModel.Password" />
+                <ValidationMessage For="@(() => RegisterModel.Password)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Confirm Password</label>
+                <InputText type="password" id="password" Class="form-control" @bind-Value="@RegisterModel.ConfirmPassword" />
+                <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
+            </div>
+            @if (ShowErrors)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @foreach (var error in Errors)
+                    {
+                        <p>@error</p>
+                    }
+                </div>
+            }
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>               
+    </div>
+</div>
+
+@code {
+
+ private readonly RegisterModel RegisterModel = new RegisterModel();
+ private bool ShowErrors;
+ private IEnumerable<string> Errors;
+
+ private async Task HandleRegistration()
+ {
+   ShowErrors = false;
+   var result = await AuthService.Register(RegisterModel);
+
+   if (result.Successful)
+   {
+     NavigationManager.NavigateTo("/login");
+   }
+   else
+   {
+     Errors = result.Errors;
+     ShowErrors = true;
+   }
+ }
+
+}

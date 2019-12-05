@@ -1,0 +1,66 @@
+﻿@page "/login"
+@using Web.Client.Services
+@using Web.Shared
+@layout EmptyLayout
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+
+<div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Please enter your details</h5>
+            </div>
+            <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+                <DataAnnotationsValidator />
+
+
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <InputText Id="email" Class="form-control" @bind-Value="@loginModel.Email" />
+                    <ValidationMessage For="@(() => loginModel.Email)" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <InputText Id="password" type="password" Class="form-control" @bind-Value="@loginModel.Password" />
+                    <ValidationMessage For="@(() => loginModel.Password)" />
+                </div>
+                @if (ShowErrors)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <p>@Error</p>
+                    </div>
+                }
+
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </EditForm>
+
+        </div>
+    </div>
+</div>
+@code {
+
+    private readonly LoginModel loginModel = new LoginModel();
+    private bool ShowErrors;
+    private string Error;
+
+    private async Task HandleLogin()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Login(loginModel);
+        Console.WriteLine(result.Successful);
+        if (result.Successful)
+        {
+            NavigationManager.NavigateTo("/camps");
+        }
+        else
+        {
+            Error = result.Error;
+            ShowErrors = true;
+        }
+    }
+
+}

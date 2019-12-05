@@ -1,0 +1,140 @@
+﻿@page "/tasks"
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject ITaskService TaskService
+@using Web.Client.Services
+@using Web.Shared
+<h3>Tasks List</h3>
+
+<AuthorizeView>
+    <Authorized>
+        @if (model == null)
+        {
+            <!-- Show this if the current user has no data... yet... -->
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else
+        {
+            <p>
+                <!-- Add a new Presentation -->
+                <button class="btn btn-success"
+                        @onclick="AddNewPresentation">
+                    Add New
+                </button>
+            </p>
+            <!-- Show the forecasts for the current user -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Level</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var task in model.Tasks)
+                    {
+                        <tr>
+                            <td>@task.Id</td>
+                            <td>@task.Title</td>
+                            <td>@task.Description</td>
+                            <td>@task.Level</td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+            @if (CreatePopup)
+            {
+                <EditForm Model="@createmodel" OnValidSubmit="@CreateCamp">
+                    <ChildContent Context="createvalid">
+                        <DataAnnotationsValidator />
+                        <!-- This is the popup to create a Presentation -->
+                        <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title">Create session</h3>
+                                        <label class="alert-danger">@ServerError</label>
+                                    </div>
+                                    <!-- Create form for the current Presentation -->
+                                    <div class="modal-body">
+                                        <label for="title">Title</label>
+                                        <InputText Id="title" Class="form-control" @bind-Value="@createmodel.Title" />
+                                        <ValidationMessage For="@(() => createmodel.Title)" />
+                                        <label for="Date">Description</label>
+                                        <InputTextArea Id="Description" Class="form-control" @bind-Value="@createmodel.Description" />
+                                        <ValidationMessage For="@(() => createmodel.Description)" />
+                                        <label for="Date">Level</label>
+                                        <InputNumber Id="Level" Class="form-control" @bind-Value="@createmodel.Level" />
+                                        <ValidationMessage For="@(() => createmodel.Level)" />
+
+                                        <br />
+                                        <!-- Button to save the Presentation -->
+                                        <button type="submit" class="btn btn-success">Create</button>
+                                        <button class="btn btn-danger"
+                                                @onclick="CloseCreatePopup">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ChildContent>
+                </EditForm>
+            }
+        }
+    </Authorized>
+    <NotAuthorized>
+        You're not logged in.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    TaskList model;
+    string currentAdmin;
+    string ServerError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        currentAdmin = authState.User.Identity.Name;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var result = await TaskService.GetList();
+            model = result;
+        }
+    }
+
+    Web.Shared.TasksViewModel createmodel;
+    bool CreatePopup;
+
+    void AddNewPresentation()
+    {
+        createmodel = new Web.Shared.TasksViewModel();
+        CreatePopup = true;
+    }
+
+    private async Task CreateCamp()
+    {
+        var result = await TaskService.Create(createmodel);
+        model.Tasks.Add(result);
+    }
+
+    void CloseCreatePopup()
+    {
+        CreatePopup = false;
+    }
+
+}                                         

@@ -1,0 +1,46 @@
+﻿<header>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <div class="container">
+            <button class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row">
+                <ul class="navbar-nav ">
+                    <li>
+                        <AuthorizeView>
+                            <Authorized>
+                                <NavLink class="nav-link" href="tasks">
+                                    <span aria-hidden="true"></span> Tasks
+                                </NavLink>
+                            </Authorized>
+                            <NotAuthorized>
+                                <NavLink class="nav-link" href="Theory">
+                                    <span aria-hidden="true"></span> Theory
+                                </NavLink>
+                                <NavLink class="nav-link" href="Test">
+                                    <span aria-hidden="true"></span> Test
+                                </NavLink>
+                            </NotAuthorized>
+                            </AuthorizeView>
+
+</li>
+
+                </ul>
+            </div>
+            <LoginDisplay/>
+        </div>
+    </nav>
+</header>
+
+@code {
+    bool collapseNavMenu = true;
+
+    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+}

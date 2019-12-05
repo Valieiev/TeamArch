@@ -1,0 +1,18 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <div class="text-light"> Hello, @context.User.Identity.Name!</div>
+        <div>
+            <a href="LogOut">Log out</a>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="d-flex flex-row-reverse">
+            <div class="p-2">
+                <a href="Registration">Register</a>
+            </div>
+            <div class="p-2">
+                <a href="Login">Log in</a>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

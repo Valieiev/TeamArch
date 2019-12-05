@@ -1,0 +1,43 @@
+﻿@using Web.Client.Services
+@inherits LayoutComponentBase
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+
+<AuthorizeView>
+    <Authorized>
+
+
+        <div class="main">
+            <NavMenu />
+            <div class="d-flex flex-row-reverse">
+
+            </div>
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="main">
+            <NavMenu />
+            <div class="d-flex flex-row-reverse">
+
+            </div>
+            <div class="content px-4">
+                @Body
+            </div>
+        </div>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+                                {
+
+    private void ToLogin()
+    {
+        NavigationManager.NavigateTo("login");
+    }
+
+}                               

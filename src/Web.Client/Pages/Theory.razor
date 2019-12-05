@@ -1,0 +1,57 @@
+﻿@page "/theory/{taskid:int}"
+@inject NavigationManager NavigationManager
+@inject ITaskService TaskService
+@using Web.Client.Services
+@using Web.Shared
+<h3>Pattern List</h3>
+
+        @if (model == null)
+        {
+            <!-- Show this if the current user has no data... yet... -->
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else
+        {
+            <!-- Show the forecasts for the current user -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Level</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@foreach (var task in model.Tasks)
+                    {
+                        <tr>
+                            <td>@task.Title</td>
+                            <td>@task.Level</td>
+                            <td>
+                            </td>
+                        </tr>
+                    }*@
+                </tbody>
+            </table>
+        }
+
+@code {
+    [Parameter]
+    public int taskid { get; set; }
+
+    TasksViewModel model;
+    string ServerError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var result = await TaskService.GetList();
+        //model = result;
+
+    }
+
+    Web.Shared.TasksViewModel createmodel;
+    bool CreatePopup;
+
+    }
