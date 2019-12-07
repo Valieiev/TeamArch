@@ -16,6 +16,9 @@ namespace Web.Client
             services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<IDiagrammService, DiagrammService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<ICodePartService, CodePartService>();
             services.AddTransient<HubConnectionBuilder>();
         }
 
