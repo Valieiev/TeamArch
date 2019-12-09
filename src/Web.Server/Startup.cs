@@ -32,6 +32,9 @@ namespace Web.Server
         {
 
             services.AddScoped<ITaskRepository, TaskRepository>();
+            services.AddScoped<IDiagrammRepository, DiagrammRepository>();
+            services.AddScoped<ICodePartRepository, CodePartRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddSignalR();
             services.AddMvc();
             services.AddAuthentication(options =>

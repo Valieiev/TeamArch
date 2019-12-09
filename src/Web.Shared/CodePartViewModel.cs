@@ -9,6 +9,7 @@ namespace Web.Shared
         public int Id { get; set; }
         public int UserTaskId { get; set; }
         public string CodeText { get; set; }
+        public int Number { get; set; }
     }
 
     public class CodePartList

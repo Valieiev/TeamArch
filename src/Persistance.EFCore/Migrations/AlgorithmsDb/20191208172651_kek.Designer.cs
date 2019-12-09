@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence.EFCore;
 
 namespace Persistence.EFСore.Migrations.AlgorithmsDb
 {
     [DbContext(typeof(AlgorithmsDbContext))]
-    partial class AlgorithmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191208172651_kek")]
+    partial class kek
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +29,6 @@ namespace Persistence.EFСore.Migrations.AlgorithmsDb
 
                     b.Property<string>("CodeText")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
 
                     b.Property<int>("UserTaskId")
                         .HasColumnType("int");

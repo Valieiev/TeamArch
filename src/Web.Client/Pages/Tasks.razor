@@ -2,6 +2,9 @@
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthService
 @inject ITaskService TaskService
+@inject IDiagrammService DiagrammService
+@inject IQuestionService QuestionService
+@inject ICodePartService CodePartService
 @using Web.Client.Services
 @using Web.Shared
 <h3>Tasks List</h3>
@@ -38,7 +41,7 @@
                 <tbody>
                     @foreach (var task in model.Tasks)
                     {
-                        <tr>
+                        <tr @onclick="(() => OpenPreview(task.Id))">
                             <td>@task.Id</td>
                             <td>@task.Title</td>
                             <td>@task.Description</td>
@@ -49,11 +52,34 @@
                     }
                 </tbody>
             </table>
-
+            @if (PreviewPopup)
+            {
+                <!-- This is the popup to show a Presentation -->
+                <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">Preview task</h3>
+                                <!-- Button to close the popup -->
+                                <button type="button" class="close"
+                                        @onclick="ClosePreview">
+                                    <span aria-hidden="true">X</span>
+                                </button>
+                            </div>
+                            <button class="btn btn-primary" @onclick="(() => AddNewDiagramm())"> Add Diagramm </button>
+                            <button class="btn btn-primary" @onclick="(() => GoToDiagrams())"> Show diagrams</button>
+                            <button class="btn btn-primary" @onclick="(() => AddNewQuestion())"> Add question</button>
+                            <button class="btn btn-primary" @onclick="(() => GoToQuestions())"> Show questions</button>
+                            <button class="btn btn-primary" @onclick="(() => AddNewCodePart())"> Add  code parts</button>
+                            <button class="btn btn-primary" @onclick="(() => GoToCodeParts())"> Show code parts</button>
+                        </div>
+                    </div>
+                </div>
+            }
 
             @if (CreatePopup)
             {
-                <EditForm Model="@createmodel" OnValidSubmit="@CreateCamp">
+                <EditForm Model="@createmodel" OnValidSubmit="@CreateTask">
                     <ChildContent Context="createvalid">
                         <DataAnnotationsValidator />
                         <!-- This is the popup to create a Presentation -->
@@ -81,6 +107,114 @@
                                         <button type="submit" class="btn btn-success">Create</button>
                                         <button class="btn btn-danger"
                                                 @onclick="CloseCreatePopup">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ChildContent>
+                </EditForm>
+            }
+
+            @if (CreateDiagrammPopup)
+            {
+                <EditForm Model="@createmodeldiagramm" OnValidSubmit="@CreateDiagramm">
+                    <ChildContent Context="createvalid">
+                        <DataAnnotationsValidator />
+                        <!-- This is the popup to create a Presentation -->
+                        <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title">Create diagramm</h3>
+                                        <label class="alert-danger">@ServerError</label>
+                                    </div>
+                                    <!-- Create form for the current Presentation -->
+                                    <div class="modal-body">
+                                        <label for="title">Title</label>
+                                        <InputText Id="title" Class="form-control" @bind-Value="@createmodeldiagramm.Name" />
+                                        <ValidationMessage For="@(() => createmodeldiagramm.Name)" />
+                                        <label for="Date">URL</label>
+                                        <InputTextArea Id="Description" Class="form-control" @bind-Value="@createmodeldiagramm.ImageURL" />
+                                        <ValidationMessage For="@(() => createmodeldiagramm.ImageURL)" />
+                                        <br />
+                                        <!-- Button to save the Presentation -->
+                                        <button type="submit" class="btn btn-success">Create</button>
+                                        <button class="btn btn-danger"
+                                                @onclick="CloseCreateDiagrammPopup">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ChildContent>
+                </EditForm>
+            }
+
+            @if (CreateQuestionPopup)
+            {
+                <EditForm Model="createmodelquestion" OnValidSubmit="@CreateQuestion">
+                    <ChildContent Context="createvalid">
+                        <DataAnnotationsValidator />
+                        <!-- This is the popup to create a Presentation -->
+                        <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title">Create question:</h3>
+                                        <label class="alert-danger">@ServerError</label>
+                                    </div>
+                                    <!-- Create form for the current Presentation -->
+                                    <div class="modal-body">
+                                        <label for="title">Question:</label>
+                                        <InputText Id="title" Class="form-control" @bind-Value="@createmodelquestion.Text" />
+                                        <ValidationMessage For="@(() => createmodelquestion.Text)" />
+                                        <label for="Date">Answer:</label>
+                                        <InputTextArea Id="Description" Class="form-control" @bind-Value="@createmodelquestion.Answer" />
+                                        <ValidationMessage For="@(() => createmodelquestion.Answer)" />
+                                        <br />
+                                        <!-- Button to save the Presentation -->
+                                        <button type="submit" class="btn btn-success">Create</button>
+                                        <button class="btn btn-danger"
+                                                @onclick="CloseCreateQuestionPopup">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ChildContent>
+                </EditForm>
+            }
+
+            @if (CreateCodePartPopup)
+            {
+                <EditForm Model="@createmodelcodepart" OnValidSubmit="@CreateCodePart">
+                    <ChildContent Context="createvalid">
+                        <DataAnnotationsValidator />
+                        <!-- This is the popup to create a Presentation -->
+                        <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title">Create code part:</h3>
+                                        <label class="alert-danger">@ServerError</label>
+                                    </div>
+                                    <!-- Create form for the current Presentation -->
+                                    <div class="modal-body">
+                                        <label for="title">Code:</label>
+                                        <InputText Id="title" Class="form-control" @bind-Value="@createmodelcodepart.CodeText" />
+                                        <ValidationMessage For="@(() => createmodelcodepart.CodeText)" />
+                                        <br />
+                                        <InputNumber Id="title" Class="form-control" @bind-Value="@createmodelcodepart.Number" />
+                                        <ValidationMessage For="@(() => createmodelcodepart.Number)" />
+                                        <br />
+                                        <!-- Button to save the Presentation -->
+                                        <button type="submit" class="btn btn-success">Create</button>
+                                        <button class="btn btn-danger"
+                                                @onclick="CloseCreateCodePartPopup">
                                             Cancel
                                         </button>
                                     </div>
@@ -118,23 +252,100 @@
     }
 
     Web.Shared.TasksViewModel createmodel;
+    Web.Shared.DiagrammViewModel createmodeldiagramm;
+    Web.Shared.QuestionViewModel createmodelquestion;
+    Web.Shared.CodePartViewModel createmodelcodepart;
     bool CreatePopup;
+    bool CreateDiagrammPopup;
+    bool CreateQuestionPopup;
+    bool PreviewPopup;
+    bool CreateCodePartPopup;
+    int SelectTask;
 
     void AddNewPresentation()
     {
         createmodel = new Web.Shared.TasksViewModel();
         CreatePopup = true;
     }
+    void OpenPreview(int selectedId)
+    {
+        PreviewPopup = true;
+        SelectTask = selectedId;
+    }
+    void ClosePreview()
+    {
+        PreviewPopup = false;
+    }
+    void AddNewQuestion()
+    {
+        createmodelquestion = new Web.Shared.QuestionViewModel();
+        createmodelquestion.UserTaskId = SelectTask;
+        CreateQuestionPopup = true;
+    }
+    void AddNewCodePart()
+    {
+        createmodelcodepart = new Web.Shared.CodePartViewModel();
+        createmodelcodepart.UserTaskId = SelectTask;
+        CreateCodePartPopup = true;
+    }
+    void AddNewDiagramm()
+    {
+        createmodeldiagramm = new Web.Shared.DiagrammViewModel();
+        createmodeldiagramm.UserTaskId = SelectTask;
+        CreateDiagrammPopup = true;
+    }
 
-    private async Task CreateCamp()
+    private async Task CreateTask()
     {
         var result = await TaskService.Create(createmodel);
         model.Tasks.Add(result);
+    }
+    private async Task CreateQuestion()
+    {
+        var result = await QuestionService.Create(createmodelquestion);
+        if (result.Id != 0) CreateQuestionPopup = false;
+    }
+    private async Task CreateDiagramm()
+    {
+        var result = await DiagrammService.Create(createmodeldiagramm);
+
+        if (result.Id != 0) CreateDiagrammPopup = false;
+    }
+    private async Task CreateCodePart()
+    {
+        var result = await CodePartService.Create(createmodelcodepart);
+
+        if (result.Id != 0) CreateCodePartPopup = false;
     }
 
     void CloseCreatePopup()
     {
         CreatePopup = false;
+    }
+    void CloseCreateDiagrammPopup()
+    {
+        CreateDiagrammPopup = false;
+    }
+    void CloseCreateQuestionPopup()
+    {
+        CreateQuestionPopup = false;
+    }
+    void CloseCreateCodePartPopup()
+    {
+        CreateCodePartPopup = false;
+    }
+
+    void GoToDiagrams()
+    {
+        NavigationManager.NavigateTo($"/diagrams/{SelectTask}");
+    }
+    void GoToCodeParts()
+    {
+        NavigationManager.NavigateTo($"/codeparts/{SelectTask}");
+    }
+    void GoToQuestions()
+    {
+        NavigationManager.NavigateTo($"/questions/{SelectTask}");
     }
 
 }                                         

@@ -26,6 +26,11 @@ namespace Web.Server.Controllers
             return Ok(_taskRepository.GetList());
         }
 
+        [HttpGet]
+        public ActionResult<TasksViewModel> GetById([FromQuery] int taskId)
+        {
+            return Ok(_taskRepository.GetById(taskId));
+        }
 
         [HttpPost]
         public ActionResult<TasksViewModel> Create([FromBody]TasksViewModel model)

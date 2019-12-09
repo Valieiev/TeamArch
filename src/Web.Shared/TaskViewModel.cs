@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Web.Shared
 {
-    public class TasksViewModel
+    public class TaskViewModel
     {
         [Key] public int Id { get; set; }
         [Required] public string Title { get; set; }
@@ -15,6 +15,6 @@ namespace Web.Shared
 
     public class TaskList
     {
-       public List<TasksViewModel>  Tasks { get; set; }
+       public List<TaskViewModel>  Tasks { get; set; }
     }
 }

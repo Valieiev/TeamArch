@@ -1,0 +1,73 @@
+﻿@page "/questions/{usertaskId:int}"
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject IQuestionService QuestionService
+@using Web.Client.Services
+@using Web.Shared
+<h3>Question List</h3>
+
+<AuthorizeView>
+    <Authorized>
+        @if (model == null)
+        {
+            <!-- Show this if the current user has no data... yet... -->
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else
+        {
+            <!-- Show the forecasts for the current user -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Text</th>
+                        <th>Answer</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var question in model.List)
+                    {
+                        <tr >
+                            <td>@question.Id</td>
+                            <td>@question.Text</td>
+                            <td>@question.Answer</td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>    
+        }
+    </Authorized>
+    <NotAuthorized>
+        You're not logged in.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Parameter]
+    public int usertaskId { get; set; }
+
+    QuestionList model;
+    string currentAdmin;
+    string ServerError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        currentAdmin = authState.User.Identity.Name;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var result = await QuestionService.GetQuestion(usertaskId);
+            model = result;
+        }
+    }
+
+}                                         

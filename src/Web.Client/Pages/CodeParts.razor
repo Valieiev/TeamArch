@@ -1,0 +1,73 @@
+﻿@page "/codeparts/{usertaskId:int}"
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject ICodePartService CodePartService
+@using Web.Client.Services
+@using Web.Shared
+<h3>Question List</h3>
+
+<AuthorizeView>
+    <Authorized>
+        @if (model == null)
+        {
+            <!-- Show this if the current user has no data... yet... -->
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else
+        {
+            <!-- Show the forecasts for the current user -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Code</th>
+                        <th>Number</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var part in model.CodeParts)
+                    {
+                    <tr>
+                        <td>@part.Id</td>
+                        <td>@part.CodeText</td>
+                        <td>@part.Number</td>
+                        <td>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+    <NotAuthorized>
+        You're not logged in.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Parameter]
+    public int usertaskId { get; set; }
+
+    CodePartList model;
+    string currentAdmin;
+    string ServerError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        currentAdmin = authState.User.Identity.Name;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var result = await CodePartService.GetList(usertaskId);
+            model = result;
+        }
+    }
+
+}                                         

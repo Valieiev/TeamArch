@@ -26,15 +26,15 @@ namespace Web.Client.Services
             return await _httpClient.GetJsonAsync<DiagrammViewModel>($"api/Diagramm/GetDiagramm?id={id}");
         }
 
-        public async Task<DiagrammList> GetDiagrammList()
+        public async Task<DiagrammList> GetDiagrammList(int usertaskId)
         {
-            return await _httpClient.GetJsonAsync<DiagrammList>($"api/Diagramm/GetDiagrammList");
+            return await _httpClient.GetJsonAsync<DiagrammList>($"api/Diagramm/GetDiagrammList?usertaskId={usertaskId}");
         }
     }
 
     public interface IDiagrammService
     {
-        Task<DiagrammList> GetDiagrammList();
+        Task<DiagrammList> GetDiagrammList(int usertaskId);
         Task<DiagrammViewModel> GetDiagramm(int id);
         Task<DiagrammViewModel> Create(DiagrammViewModel model);
     }

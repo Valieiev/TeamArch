@@ -10,5 +10,6 @@ namespace Persistence.EFСore
         public int UserTaskId { get; set; }
         public UserTask UserTask { get; set; }
         public string CodeText { get; set; }
+        public int Number { get; set; }
     }
 }

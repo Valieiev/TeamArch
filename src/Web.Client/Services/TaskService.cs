@@ -23,6 +23,11 @@ namespace Web.Client.Services
             return await _httpClient.PostJsonAsync<TasksViewModel>($"api/Task/Create",model);
         }
 
+        public async Task<TasksViewModel> GetById(int taskId)
+        {
+            return await _httpClient.GetJsonAsync<TasksViewModel>($"api/Task/GetById?taskId={taskId}");
+        }
+
         public async Task<TaskList> GetList()
         {
             return await _httpClient.GetJsonAsync<TaskList>($"api/Task/GetTasks"); 
@@ -34,6 +39,7 @@ namespace Web.Client.Services
     public interface ITaskService
     {
         Task<TaskList> GetList();
+        Task<TasksViewModel> GetById(int taskId);
         Task<TasksViewModel> Create(TasksViewModel model);
     }
 }

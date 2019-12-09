@@ -32,7 +32,7 @@ namespace Persistence.EFСore.Repositories
             return new DiagrammViewModel() {Id= result.Id, ImageURL = result.ImageURL, Name = result.Name, UserTaskId= result.UserTaskId };
         }
 
-        public DiagrammList GetList(int usertaskId)
+        public DiagrammList GetList()
         {
             var result = (from diagramm in _DB.Diagramms
                           select new DiagrammViewModel
@@ -65,6 +65,6 @@ namespace Persistence.EFСore.Repositories
         public void Create(DiagrammViewModel model);
 
         public DiagrammViewModel GetById(int id);
-        public DiagrammList GetList(int usertaskId);
+        public DiagrammList GetList();
     }
 }

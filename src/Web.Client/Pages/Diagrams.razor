@@ -1,0 +1,73 @@
+﻿@page "/diagrams/{usertaskId:int}"
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject IDiagrammService DiagrammService
+@using Web.Client.Services
+@using Web.Shared
+<h3>Diagramm List</h3>
+
+<AuthorizeView>
+    <Authorized>
+        @if (model == null)
+        {
+            <!-- Show this if the current user has no data... yet... -->
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else
+        {
+            <!-- Show the forecasts for the current user -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var diagramm in model.List)
+                    {
+                        <tr>
+                            <td>@diagramm.Id</td>
+                            <td>@diagramm.Name</td>
+                            <td><img src="@diagramm.ImageURL"> </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+    <NotAuthorized>
+        You're not logged in.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Parameter]
+    public int usertaskId { get; set; }
+
+    DiagrammList model;
+    string currentAdmin;
+    string ServerError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        currentAdmin = authState.User.Identity.Name;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var result = await DiagrammService.GetDiagrammList(usertaskId);
+            model = result;
+        }
+    }
+
+}                                         

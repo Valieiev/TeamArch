@@ -1,0 +1,159 @@
+﻿@page "/test/{usertaskId:int}"
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject ITaskService TaskService
+@inject IDiagrammService DiagrammService
+@inject IQuestionService QuestionService
+@inject ICodePartService CodePartService
+@using Web.Client.Services
+@using Web.Shared
+<AuthorizeView>
+    <Authorized>
+        @if (model == null)
+        {
+            <!-- Show this if the current user has no data... yet... -->
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else
+        {
+
+            @if (QuestionPopup)
+            {
+                <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">@model.Title:</h3>
+                                <label class="alert-danger">@ServerError</label>
+                            </div>
+                            <!-- Create form for the current Presentation -->
+                            <div class="modal-body">
+                                @foreach (var item in questionmodel.List)
+                                {
+                                    <label>@item.Text: </label>
+                                    <input />
+                                }
+                                <button @onclick="(() => OpenDiagrammPopup())">Diagramm test</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (CodePartPopup)
+            {
+                <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">@model.Title:</h3>
+                                <label class="alert-danger">@ServerError</label>
+                            </div>
+                            <!-- Create form for the current Presentation -->
+                            <div class="modal-body">
+                                @foreach (var item in codepartlit.CodeParts)
+                                {
+                                    <label>@item.CodeText</label>
+                                    <input />
+                                }
+                                <button @onclick="(() => OpenResult())">End test</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (DiagrammPopup)
+            {
+                <div class="modal" tabindex="-1" style="display: block; overflow: auto;" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">@model.Title:</h3>
+                                <label class="alert-danger">@ServerError</label>
+                            </div>
+                            <!-- Create form for the current Presentation -->
+                            <div class="modal-body">
+                                @foreach (var item in diagrammlist.List)
+                                {
+                                    <img src="@item.ImageURL">
+                                    <input />
+                                }
+                                <button @onclick="(() => OpenCodePart())">OpenCodePart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </Authorized>
+    <NotAuthorized>
+        You're not logged in.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    [Parameter]
+    public int usertaskId { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>
+    authenticationStateTask { get; set; }
+
+    TasksViewModel model;
+    QuestionList questionmodel;
+    CodePartList codepartlit;
+    DiagrammList diagrammlist;
+    string currentAdmin;
+    string ServerError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        currentAdmin = authState.User.Identity.Name;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            var result = await TaskService.GetById(usertaskId);
+            model = result;
+            questionmodel = await QuestionService.GetQuestion(usertaskId);
+            codepartlit = await CodePartService.GetList(usertaskId);
+            diagrammlist = await DiagrammService.GetDiagrammList(usertaskId);
+        }
+        QuestionPopup = true;
+    }
+
+    bool QuestionPopup;
+    bool CodePartPopup;
+    bool DiagrammPopup;
+    bool ResultPopup;
+
+
+    void CloseQuestion()
+    {
+        QuestionPopup = false;
+    }
+    void OpenCodePart()
+    {
+        DiagrammPopup = false;
+        CodePartPopup = true;
+    }
+    void CloseCodePart()
+    {
+        CodePartPopup = false;
+    }
+    void OpenDiagrammPopup()
+    {
+        QuestionPopup = false;
+        DiagrammPopup = true;
+    }
+    void OpenResult()
+    {
+        ResultPopup = true;
+    }
+    void CloseDiagrammPopup()
+    {
+        DiagrammPopup = false;
+    }
+}

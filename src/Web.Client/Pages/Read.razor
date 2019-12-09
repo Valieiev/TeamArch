@@ -1,0 +1,43 @@
+﻿@page "/read/{taskId:int}"
+@inject NavigationManager NavigationManager
+@inject ITaskService TaskService
+@using Web.Client.Services
+@using Web.Shared
+<h3>Select your lesson:</h3>
+
+@if (model == null)
+{
+    <!-- Show this if the current user has no data... yet... -->
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <h1>@model.Title </h1>
+    <div class="align-content-xl-center">
+        @model.Description
+    </div>
+    <button type="button" class="btn btn-info " @onclick="(() => GoToTest())">Test</button>
+
+}
+
+@code {
+    [Parameter]
+    public int taskId { get; set; }
+    TasksViewModel model;
+    string ServerError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await TaskService.GetById(taskId);
+        model = result;
+
+    }
+
+    private void GoToTest()
+    {
+        NavigationManager.NavigateTo($"/test/{model.Id.ToString()}");
+    }
+
+}

@@ -30,6 +30,7 @@ namespace Persistence.EFСore.Repositories
                           {
                               Id = part.Id,
                               CodeText = part.CodeText,
+                              Number = part.Number,
                               UserTaskId = part.UserTaskId
                           }).ToList();
             CodePartList list = new CodePartList();
@@ -43,6 +44,7 @@ namespace Persistence.EFСore.Repositories
             {
                 CodeText = model.CodeText,
                 Id = model.Id,
+                Number = model.Number,
                 UserTaskId = model.UserTaskId,
                 UserTask = _DB.UserTasks.Where(x => x.Id == model.UserTaskId).FirstOrDefault()
             };

@@ -14,6 +14,7 @@ namespace Persistence.EFCore
         public virtual DbSet<Diagramm> Diagramms { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<CodePart> CodeParts { get; set; }
+        public virtual DbSet<TestResult> TestResults { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }

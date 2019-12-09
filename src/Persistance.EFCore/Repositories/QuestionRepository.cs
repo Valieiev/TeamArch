@@ -33,6 +33,7 @@ namespace Persistence.EFСore.Repositories
         {
             var item = _DB.Questions;
             var result = (from question in _DB.Questions
+                          where question.UserTaskId == usertaskId
                           select new QuestionViewModel()
                           {
                               Id = question.Id,

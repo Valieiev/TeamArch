@@ -1,9 +1,9 @@
-﻿@page "/theory/{taskid:int}"
+﻿@page "/theory"
 @inject NavigationManager NavigationManager
 @inject ITaskService TaskService
 @using Web.Client.Services
 @using Web.Shared
-<h3>Pattern List</h3>
+<h3>Select your lesson:</h3>
 
         @if (model == null)
         {
@@ -24,33 +24,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @*@foreach (var task in model.Tasks)
+                    @foreach (var task in model.Tasks)
                     {
-                        <tr>
+                        <tr @onclick="(() => GoToRead(task.Id))">
                             <td>@task.Title</td>
                             <td>@task.Level</td>
-                            <td>
-                            </td>
                         </tr>
-                    }*@
+                    }
                 </tbody>
             </table>
         }
 
 @code {
-    [Parameter]
-    public int taskid { get; set; }
 
-    TasksViewModel model;
+    TaskList model;
     string ServerError;
 
     protected override async Task OnInitializedAsync()
     {
-        //var result = await TaskService.GetList();
-        //model = result;
+        var result = await TaskService.GetList();
+        model = result;
 
     }
 
+    void GoToRead(int taskId)
+    {
+        NavigationManager.NavigateTo($"/read/{taskId}");
+    }
     Web.Shared.TasksViewModel createmodel;
     bool CreatePopup;
 

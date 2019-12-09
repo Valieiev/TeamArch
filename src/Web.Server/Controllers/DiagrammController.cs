@@ -27,9 +27,9 @@ namespace Web.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<DiagrammList> GetDiagrammList(int usertaskId)
+        public ActionResult<DiagrammList> GetDiagrammList()
         {
-            return Ok(_diagrammRepository.GetList(usertaskId));
+            return Ok(_diagrammRepository.GetList());
         }
 
 
