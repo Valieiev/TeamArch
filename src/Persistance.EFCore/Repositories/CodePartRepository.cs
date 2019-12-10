@@ -22,9 +22,26 @@ namespace Persistence.EFСore.Repositories
             model.Id = item.Id;
         }
 
+        public CodePartList GetAll()
+        {
+            var result = (from part in _DB.CodeParts                    
+                          select new CodePartViewModel
+                          ()
+                          {
+                              Id = part.Id,
+                              CodeText = part.CodeText,
+                              Number = part.Number,
+                              UserTaskId = part.UserTaskId
+                          }).ToList();
+            CodePartList list = new CodePartList();
+            list.CodeParts = result;
+            return list;
+        }
+
         public CodePartList GetList(int id)
         {
             var result = (from part in _DB.CodeParts
+                          where part.UserTaskId == id
                           select new CodePartViewModel
                           ()
                           {
@@ -56,5 +73,6 @@ namespace Persistence.EFСore.Repositories
         public void Create(CodePartViewModel model);
 
         public CodePartList GetList(int id);
+        public CodePartList GetAll();
     }
 }

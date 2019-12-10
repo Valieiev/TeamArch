@@ -26,10 +26,15 @@ namespace Web.Client.Services
         {
             return await _httpClient.GetJsonAsync<CodePartList>($"api/CodePart/GetList?usertaskId={usertaskId}");
         }
+        public async Task<CodePartList> GetAll()
+        {
+            return await _httpClient.GetJsonAsync<CodePartList>($"api/CodePart/GetAll");
+        }
     }
     public interface ICodePartService
     {
         Task<CodePartList> GetList(int usertaskId);
         Task<CodePartViewModel> Create(CodePartViewModel model);
+         Task<CodePartList> GetAll();
     }
 }

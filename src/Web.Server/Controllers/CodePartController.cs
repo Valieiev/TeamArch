@@ -27,6 +27,12 @@ namespace Web.Server.Controllers
             return Ok(_codePartRepository.GetList(usertaskId));
         }
 
+        [HttpGet]
+        public ActionResult<CodePartList> GetAll()
+        {
+            return Ok(_codePartRepository.GetAll());
+        }
+
 
         [HttpPost]
         public ActionResult<CodePartViewModel> Create([FromBody]CodePartViewModel model)

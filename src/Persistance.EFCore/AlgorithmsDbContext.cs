@@ -27,10 +27,10 @@ namespace Persistence.EFCore
             modelBuilder.Entity<UserTask>()
                 .HasMany(c => c.Questions)
                 .WithOne(e => e.UserTask);
-            modelBuilder.Entity<Diagramm>()
-                .HasOne(c => c.UserTask)
-                .WithOne(e => e.diagramm)
-                .HasForeignKey<Diagramm>(b=>b.UserTaskId);
+            modelBuilder.Entity<UserTask>()
+                .HasMany(c => c.Diagramms)
+                .WithOne(e => e.UserTask);
+               
         }
     }
 }

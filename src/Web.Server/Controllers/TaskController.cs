@@ -27,13 +27,13 @@ namespace Web.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<TasksViewModel> GetById([FromQuery] int taskId)
+        public ActionResult<TaskViewModel> GetById([FromQuery] int taskId)
         {
             return Ok(_taskRepository.GetById(taskId));
         }
 
         [HttpPost]
-        public ActionResult<TasksViewModel> Create([FromBody]TasksViewModel model)
+        public ActionResult<TaskViewModel> Create([FromBody]TaskViewModel model)
         {
             _taskRepository.Create(model);
             return Ok(model);

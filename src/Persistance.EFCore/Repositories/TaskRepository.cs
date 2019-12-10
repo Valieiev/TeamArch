@@ -17,7 +17,7 @@ namespace Persistence.EFСore.Repositories
             _DB = DB;
         }
 
-        public void Create(TasksViewModel model)
+        public void Create(TaskViewModel model)
         {
             var item = ToUserTask(model);
             _DB.UserTasks.Add(item);
@@ -25,16 +25,16 @@ namespace Persistence.EFСore.Repositories
             model.Id = item.Id;
         }
 
-        public TasksViewModel GetById(int id)
+        public TaskViewModel GetById(int id)
         {
             var result = _DB.UserTasks.FirstOrDefault(x => x.Id == id);
-            return new TasksViewModel() {Id = result .Id, Description = result.Description, Level = result .Level, Title= result.Title};
+            return new TaskViewModel() {Id = result .Id, Description = result.Description, Level = result .Level, Title= result.Title};
         }
 
         public TaskList GetList()
         {
           var result = (from task in _DB.UserTasks
-                              select new TasksViewModel
+                              select new TaskViewModel
                               () 
                               {
                                  Id = task.Id,
@@ -47,7 +47,7 @@ namespace Persistence.EFСore.Repositories
             return list;
         }
 
-        private UserTask ToUserTask(TasksViewModel model)
+        private UserTask ToUserTask(TaskViewModel model)
         {
             return new UserTask()
             {
@@ -60,8 +60,8 @@ namespace Persistence.EFСore.Repositories
 
     public interface ITaskRepository
     {
-        public void Create(TasksViewModel model);
-        public TasksViewModel GetById(int id);
+        public void Create(TaskViewModel model);
+        public TaskViewModel GetById(int id);
         public TaskList GetList();
     }
 }

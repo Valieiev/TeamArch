@@ -1,0 +1,59 @@
+﻿<div class="job-status">
+    <h3>@ListStatus (@CodeParts.Count())</h3>
+
+    <ul class="dropzone @dropClass" ondragover="event.preventDefault();"
+        @ondrop="HandleDrop"
+        @ondragenter="HandleDragEnter"
+        @ondragleave="HandleDragLeave">
+
+        @foreach (var part in CodeParts)
+        {
+            <CodePart CodePartModel="part" />
+        }
+
+    </ul>
+</div>
+
+@code {
+
+    [CascadingParameter] CodeContainer Container { get; set; }
+    [Parameter] public CodePartStatus ListStatus { get; set; }
+    [Parameter] public CodePartStatus[] AllowedStatuses { get; set; }
+
+    List<CodePartViewModel> CodeParts = new List<CodePartViewModel>();
+    string dropClass = "";
+
+    protected override void OnParametersSet()
+    {
+        CodeParts.Clear();
+        CodeParts.AddRange(Container.CodeParts.Where(x => x.Status == ListStatus));
+    }
+
+    private void HandleDragEnter()
+    {
+        if (ListStatus == Container.Payload.Status) return;
+
+        if (AllowedStatuses != null && !AllowedStatuses.Contains(Container.Payload.Status))
+        {
+            dropClass = "no-drop";
+        }
+        else
+        {
+            dropClass = "can-drop";
+        }
+    }
+
+    private void HandleDragLeave()
+    {
+        dropClass = "";
+    }
+
+    private async Task HandleDrop()
+    {
+        dropClass = "";
+
+        if (AllowedStatuses != null && !AllowedStatuses.Contains(Container.Payload.Status)) return;
+
+        await Container.UpdateCodePartAsync(ListStatus);
+    }
+}

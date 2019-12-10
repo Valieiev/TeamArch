@@ -1,0 +1,19 @@
+﻿<h3>CodePart</h3>
+
+@code {
+
+}
+
+<li class="draggable" draggable="true" @ondragstart="@(() => HandleDragStart(CodePartModel))">
+    <p class="description">@CodePartModel.CodeText</p>
+</li>
+
+@code {
+    [CascadingParameter] CodeContainer Container { get; set; }
+    [Parameter] public CodePartViewModel CodePartModel { get; set; }
+
+    private void HandleDragStart(CodePartViewModel selectedCode)
+    {
+        Container.Payload = selectedCode;
+    }
+}

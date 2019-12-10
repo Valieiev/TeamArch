@@ -18,14 +18,14 @@ namespace Web.Client.Services
             _httpClient = httpClient;
         }
 
-        public async Task<TasksViewModel> Create(TasksViewModel model)
+        public async Task<TaskViewModel> Create(TaskViewModel model)
         {
-            return await _httpClient.PostJsonAsync<TasksViewModel>($"api/Task/Create",model);
+            return await _httpClient.PostJsonAsync<TaskViewModel>($"api/Task/Create",model);
         }
 
-        public async Task<TasksViewModel> GetById(int taskId)
+        public async Task<TaskViewModel> GetById(int taskId)
         {
-            return await _httpClient.GetJsonAsync<TasksViewModel>($"api/Task/GetById?taskId={taskId}");
+            return await _httpClient.GetJsonAsync<TaskViewModel>($"api/Task/GetById?taskId={taskId}");
         }
 
         public async Task<TaskList> GetList()
@@ -39,7 +39,7 @@ namespace Web.Client.Services
     public interface ITaskService
     {
         Task<TaskList> GetList();
-        Task<TasksViewModel> GetById(int taskId);
-        Task<TasksViewModel> Create(TasksViewModel model);
+        Task<TaskViewModel> GetById(int taskId);
+        Task<TaskViewModel> Create(TaskViewModel model);
     }
 }

@@ -1,0 +1,25 @@
+﻿<div class="jobs-container">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    [Parameter] public List<CodePartViewModel> CodeParts { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback<CodePartViewModel> OnStatusUpdated { get; set; }
+
+    public CodePartViewModel Payload { get; set; }
+
+    public async Task UpdateCodePartAsync(CodePartStatus newStatus)
+    {
+        var task = CodeParts.SingleOrDefault(x => x.Id == Payload.Id);
+
+        if (task != null)
+        {
+            task.Status = newStatus;
+            task.LastUpdated = DateTime.Now;
+            await OnStatusUpdated.InvokeAsync(Payload);
+        }
+    }
+}

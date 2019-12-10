@@ -1,0 +1,34 @@
+﻿@page "/practice"
+@inject ICodePartService CodePartService
+@using System.Linq
+<h3>Practice</h3>
+
+<CodeContainer CodeParts="Models.CodeParts" OnStatusUpdated="HandleStatusUpdated">
+    <CodePartList ListStatus="CodePartStatus.Show" AllowedStatuses="@(new CodePartStatus[] { CodePartStatus.Selected})" />
+    <CodePartList ListStatus="CodePartStatus.Selected" AllowedStatuses="@(new CodePartStatus[] { CodePartStatus.Show})" />
+    <CodePartList ListStatus="CodePartStatus.Correct" AllowedStatuses="@(new CodePartStatus[] { CodePartStatus.Correct })" />
+</CodeContainer>
+
+
+@code {
+
+    Web.Shared.CodePartList Models = new Web.Shared.CodePartList();
+    string lastUpdatedCodePart = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await CodePartService.GetAll();
+        foreach (var item in result.CodeParts)
+        {
+            item.Status = CodePartStatus.Show;
+        }
+        Models = result;
+    }
+
+    void HandleStatusUpdated(CodePartViewModel updatedCodePart)
+    {
+        Models.CodeParts = Models.CodeParts.OrderBy(x=>x.LastUpdated).ToList();
+        lastUpdatedCodePart = updatedCodePart.CodeText;
+    }
+
+}
