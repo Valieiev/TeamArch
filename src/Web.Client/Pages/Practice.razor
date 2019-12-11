@@ -1,5 +1,7 @@
 ﻿@page "/practice"
 @inject ICodePartService CodePartService
+@inject ITaskService TaskService
+@inject NavigationManager NavigationManager
 @using System.Linq
 <h3>Practice</h3>
 
@@ -8,27 +10,66 @@
     <CodePartList ListStatus="CodePartStatus.Selected" AllowedStatuses="@(new CodePartStatus[] { CodePartStatus.Show})" />
     <CodePartList ListStatus="CodePartStatus.Correct" AllowedStatuses="@(new CodePartStatus[] { CodePartStatus.Correct })" />
 </CodeContainer>
-
+<div class="d-flex justify-content-center"><label class="alert alert-danger">@Message </label></div>
+<div class="d-flex justify-content-center"><label class="alert alert-success">@Congratulations </label></div>
+<div class="d-flex justify-content-center">
+    <button class="btn btn-success" @onclick="(()=>Check())">Check answer!</button>
+</div>
 
 @code {
-
+    string Message = "";
+    string Congratulations = "";
     Web.Shared.CodePartList Models = new Web.Shared.CodePartList();
+    Web.Shared.CodePartList CheckList = new Web.Shared.CodePartList();
     string lastUpdatedCodePart = "";
+    int countOfTask = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await CodePartService.GetAll();
+        Random rand = new Random();
+        var count = await TaskService.GetList();
+        countOfTask = count.Tasks.Count;
+        Console.WriteLine(countOfTask);
+        var randvalue = rand.Next(1, countOfTask+1)-1;
+        Console.WriteLine(randvalue);
+        var result = await CodePartService.GetList(count.Tasks[randvalue].Id);
+        CheckList = await CodePartService.GetList(count.Tasks[randvalue].Id);
+        for (int i = 0; i < result.CodeParts.Count; i++)
+        {
+            CodePartViewModel tmp = result.CodeParts[0];
+            result.CodeParts.RemoveAt(0);
+            result.CodeParts.Insert(rand.Next(result.CodeParts.Count), tmp);
+        }
         foreach (var item in result.CodeParts)
         {
             item.Status = CodePartStatus.Show;
         }
+
         Models = result;
     }
 
     void HandleStatusUpdated(CodePartViewModel updatedCodePart)
     {
-        Models.CodeParts = Models.CodeParts.OrderBy(x=>x.LastUpdated).ToList();
+        Models.CodeParts = Models.CodeParts.OrderBy(x => x.LastUpdated).ToList();
         lastUpdatedCodePart = updatedCodePart.CodeText;
     }
+
+    void Check()
+    {
+        foreach (var item in CheckList.CodeParts)
+        {
+            item.Status = CodePartStatus.Correct;
+            Models.CodeParts.Add(item);
+        }
+
+        for (int i = 0; i < CheckList.CodeParts.Count; i++)
+        {
+
+            if (Models.CodeParts[i].Id != CheckList.CodeParts[i].Id && Models.CodeParts[i].Status != CodePartStatus.Selected) Message = "Mistake";
+        }
+        if (Message == "") Congratulations = "Congratulations!";
+
+    }
+
 
 }
